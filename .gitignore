@@ -1,0 +1,10 @@
+/build/
+__pycache__/
+*.pyc
+.venv/
+/data/raw/
+/data/processed/
+/data/models/
+/data/reports/
+/data
+/shared_schema

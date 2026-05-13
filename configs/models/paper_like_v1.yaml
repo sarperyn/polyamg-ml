@@ -1,0 +1,13 @@
+schema_version: "1.0"
+model_id: paper_like_v1
+architecture: cnn_ffn
+training:
+  epochs: 200
+  batch_size: 32
+  lr: 1.0e-3
+  loss: mse
+  seed: 42
+features:
+  m: 50
+  op: sum
+  normalize: std+id

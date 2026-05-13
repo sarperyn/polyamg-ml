@@ -1,0 +1,21 @@
+schema_version: "1.0"
+experiment_id: theta_levels_relation_vertical_stripes4
+output_dir: data/raw/theta_levels_relation_vertical_stripes4
+mesh_path: ""
+pde: elliptic
+seed: 42
+diffusion_pattern: vertical_stripes4
+theta_values: [0.02, 0.06, 0.1, 0.14, 0.18, 0.22, 0.24, 0.25, 0.3, 0.36, 0.42, 0.48, 0.54, 0.6, 0.66, 0.72, 0.78, 0.84, 0.9]
+epsilon_values: [0.0, 1.5, 3.17, 5.0, 6.34, 7.5, 9.5]
+h_values: [0.2, 0.125, 0.1, 0.0625, 0.05, 0.03125]
+solver:
+  max_it: 500
+  rtol: 1.0e-8
+  atol: 1.0e-50
+  ksp_type: cg
+  pc_type: hypre
+  hypre_type: boomeramg
+features:
+  m: 50
+  op: sum
+  normalize: std+id

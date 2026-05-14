@@ -24,7 +24,21 @@ class ModelExporter:
 
         m = int(meta.get("model_shape", {}).get("m", meta.get("features", {}).get("m", 50)))
         in_channels = int(meta.get("model_shape", {}).get("in_channels", 1))
-        model = self.model_factory.create(in_channels=in_channels, m=m)
+        architecture = dict(meta.get("architecture", {}))
+        architecture.pop("name", None)
+        if {"W1", "D1", "P1", "O", "W3", "D3"} <= set(architecture):
+            architecture = {
+                "conv1_channels": architecture["W1"],
+                "conv1_depth": architecture["D1"],
+                "conv1_dropout": architecture["P1"],
+                "conv2_channels": architecture.get("W2"),
+                "conv2_depth": architecture.get("D2", 0),
+                "conv2_dropout": architecture.get("P2", 0.0),
+                "cnn_out_width": architecture["O"],
+                "dense_width": architecture["W3"],
+                "dense_depth": architecture["D3"],
+            }
+        model = self.model_factory.create(in_channels=in_channels, m=m, **architecture)
         state = torch.load(model_pt, map_location="cpu")
         model.load_state_dict(state, strict=False)
         model.eval()
@@ -48,6 +62,8 @@ class ModelExporter:
             "model_id": meta["model_id"],
             "onnx_path": str(out),
             "features": meta["features"],
+            "architecture": meta.get("architecture", {}),
+            "model_shape": meta.get("model_shape", {}),
             "theta_grid": theta_grid,
             "preprocessing_sha256": meta["preprocessing_sha256"],
         }

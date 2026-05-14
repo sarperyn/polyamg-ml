@@ -73,6 +73,8 @@ def main() -> None:
     ap.add_argument("--pvalue_ylim", type=float, nargs=2, default=(0.0, 0.5))
     ap.add_argument("--r2_xlim", type=float, nargs=2, default=(0.15, 0.9))
     ap.add_argument("--r2_ylim", type=float, nargs=2, default=(0.0, 7.5))
+    ap.add_argument("--pvalue_bins", type=int, default=40)
+    ap.add_argument("--r2_bins", type=int, default=40)
     args = ap.parse_args()
 
     records = _as_records(args.input_dir, args.input_glob)
@@ -149,7 +151,7 @@ def main() -> None:
         p_floor = max(float(args.pvalue_xlim[0]), np.finfo(float).tiny)
         p_ceil = max(float(args.pvalue_xlim[1]), p_floor * 10.0)
         plot_p_values = np.clip(np.asarray(p_values, dtype=float), p_floor, p_ceil)
-        p_bins = np.logspace(np.log10(p_floor), np.log10(p_ceil), 13)
+        p_bins = np.logspace(np.log10(p_floor), np.log10(p_ceil), args.pvalue_bins + 1)
         counts, _ = np.histogram(plot_p_values, bins=p_bins)
         log_widths = np.diff(np.log10(p_bins))
         total = max(int(np.sum(counts)), 1)
@@ -178,7 +180,7 @@ def main() -> None:
     if r2_values:
         axes[2].hist(
             r2_values,
-            bins=12,
+            bins=args.r2_bins,
             density=True,
             color="#1f77b4",
             edgecolor="#1f1f1f",

@@ -109,6 +109,47 @@ PYTHONPATH=py_ml .venv/bin/python scripts/generate_report.py \
 
 Add `--out_pdf data/reports/comparison/report.pdf` when `pdflatex` is available.
 
+## Reproduce Report Artifacts
+
+Regenerate every artifact under `data/reports/` from the baseline sweeps in
+`data/raw/baseline_*`:
+
+```bash
+make reports
+```
+
+This recreates separate theta-levels figures for each baseline pattern, separate
+solver-time figures for the baseline `checker4x4` and `vertical_stripes4` patterns, the normalized
+time-vs-rho scatter figure, and the theta-rho table files. If `pdflatex` is
+available, it also rebuilds the theta-rho PDF.
+
+The individual targets are also available for focused reruns:
+
+- `make theta-levels-figures`
+- `make theta-levels-vertical-split`
+- `make theta-levels-vertical-stripes4`
+- `make theta-levels-checker2x2`
+- `make theta-levels-checker4x4`
+- `make solver-times-figures`
+- `make solver-times-vertical-stripes4`
+- `make solver-times-checker4x4`
+- `make time-vs-rho-figure`
+- `make theta-rho-tables`
+
+## Reproduce Timing Figure
+
+Use the dense theta-rho sweeps to reproduce separate solver-time plots with mean
+and standard deviation error bars:
+
+```bash
+make solver-times-figures
+```
+
+The target writes:
+
+- `data/reports/theta_solver_times/vertical_stripes4_solver_times.png`
+- `data/reports/theta_solver_times/checker4x4_solver_times.png`
+
 ## Notes
 
 - YAML files in `configs/experiments/` are the only committed experiment configs.

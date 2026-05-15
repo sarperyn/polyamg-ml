@@ -12,6 +12,7 @@ from torch.utils.data import DataLoader, random_split
 from polyamg_ml.dataset import JsonSampleDataset
 from polyamg_ml.features import FeatureConfig, preprocessing_sha256
 from polyamg_ml.models import ModelFactory
+from polyamg_ml.training.device import resolve_device
 
 
 @dataclass(frozen=True)
@@ -50,10 +51,12 @@ class Trainer:
         conv2_depth: int = 0,
         conv2_dropout: float = 0.0,
         cnn_out_width: int = 128,
+        device: str = "auto",
         progress: bool = True,
     ) -> TrainingResult:
         out = Path(out_dir)
         out.mkdir(parents=True, exist_ok=True)
+        train_device = resolve_device(device)
 
         torch.manual_seed(seed)
         ds = JsonSampleDataset(data_glob)
@@ -66,9 +69,10 @@ class Trainer:
         train_ds, val_ds, test_ds = random_split(
             ds, [n_train, n_val, n_test], generator=torch.Generator().manual_seed(seed)
         )
-        train_ld = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
-        val_ld = DataLoader(val_ds, batch_size=batch_size)
-        test_ld = DataLoader(test_ds, batch_size=batch_size)
+        pin_memory = train_device.type == "cuda"
+        train_ld = DataLoader(train_ds, batch_size=batch_size, shuffle=True, pin_memory=pin_memory)
+        val_ld = DataLoader(val_ds, batch_size=batch_size, pin_memory=pin_memory)
+        test_ld = DataLoader(test_ds, batch_size=batch_size, pin_memory=pin_memory)
 
         sample0 = ds[0][0]
         in_channels = int(sample0.shape[0])
@@ -100,7 +104,7 @@ class Trainer:
             cnn_out_width=cnn_out_width,
             dense_width=dense_width,
             dense_depth=dense_depth,
-        )
+        ).to(train_device)
         opt = torch.optim.Adam(model.parameters(), lr=lr)
         crit = nn.MSELoss() if loss == "mse" else nn.L1Loss()
 
@@ -114,6 +118,10 @@ class Trainer:
             train_loss_total = 0.0
             train_count = 0
             for x, h, theta, y in train_ld:
+                x = x.to(train_device, non_blocking=pin_memory)
+                h = h.to(train_device, non_blocking=pin_memory)
+                theta = theta.to(train_device, non_blocking=pin_memory)
+                y = y.to(train_device, non_blocking=pin_memory)
                 pred = model(x, -torch.log2(torch.clamp(h, min=1e-8)), theta)
                 train_loss = crit(pred, y)
                 opt.zero_grad()
@@ -128,6 +136,10 @@ class Trainer:
             val_count = 0
             with torch.no_grad():
                 for x, h, theta, y in val_ld:
+                    x = x.to(train_device, non_blocking=pin_memory)
+                    h = h.to(train_device, non_blocking=pin_memory)
+                    theta = theta.to(train_device, non_blocking=pin_memory)
+                    y = y.to(train_device, non_blocking=pin_memory)
                     pred = model(x, -torch.log2(torch.clamp(h, min=1e-8)), theta)
                     val_loss = crit(pred, y)
                     batch_n = int(y.numel())
@@ -166,6 +178,10 @@ class Trainer:
         test_count = 0
         with torch.no_grad():
             for x, h, theta, y in test_ld:
+                x = x.to(train_device, non_blocking=pin_memory)
+                h = h.to(train_device, non_blocking=pin_memory)
+                theta = theta.to(train_device, non_blocking=pin_memory)
+                y = y.to(train_device, non_blocking=pin_memory)
                 pred = model(x, -torch.log2(torch.clamp(h, min=1e-8)), theta)
                 batch_n = int(y.numel())
                 test_mse_total += nn.functional.mse_loss(pred, y, reduction="sum").item()
@@ -200,6 +216,7 @@ class Trainer:
             },
             "batch_size": batch_size,
             "learning_rate": lr,
+            "device": str(train_device),
             "seed": seed,
         }
         metadata_path = out / "train_meta.json"

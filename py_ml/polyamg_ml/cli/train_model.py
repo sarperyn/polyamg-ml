@@ -29,6 +29,7 @@ def main() -> None:
     ap.add_argument("--conv2_depth", type=int, default=0)
     ap.add_argument("--conv2_dropout", type=float, default=0.0)
     ap.add_argument("--cnn_out_width", type=int, default=128)
+    ap.add_argument("--device", choices=["auto", "cpu", "cuda", "mps"], default="auto")
     ap.add_argument("--no_progress", action="store_true")
     args = ap.parse_args()
     kwargs = vars(args)

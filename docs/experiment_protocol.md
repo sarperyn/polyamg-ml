@@ -11,6 +11,19 @@
 
 3. Add `--execute` to run the matching C++ executable after the run metadata and
    legacy bridge config are written.
+
+   Test case 2 configs use `epsilon1_values` and `epsilon2_values`:
+
+   ```bash
+   PYTHONPATH=py_ml .venv/bin/python scripts/run_experiment.py \
+     --config configs/experiments/test_case2_checker2x2.yaml \
+     --mode baseline \
+     --execute
+   ```
+
+   In these runs, the assembled coefficient is `10^epsilon2` on gray cells and
+   `10^epsilon1` on white cells. The older `epsilon_values` field remains the
+   dataset-1 shorthand for `epsilon1=0` and `epsilon2=epsilon`.
 4. Train a model from baseline records:
 
    ```bash

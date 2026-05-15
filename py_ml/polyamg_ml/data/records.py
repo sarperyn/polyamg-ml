@@ -40,10 +40,18 @@ class SampleRecord:
 def record_join_key(record: SampleRecord) -> tuple[Any, ...]:
     meta = record.sample_meta
     descriptors = meta.get("polygonal_descriptors", {})
+    epsilon = None if meta.get("epsilon") is None else float(meta["epsilon"])
+    epsilon1 = None if meta.get("epsilon1") is None else float(meta["epsilon1"])
+    epsilon2 = None if meta.get("epsilon2") is None else float(meta["epsilon2"])
+    if epsilon is not None:
+        epsilon1 = 0.0 if epsilon1 is None else epsilon1
+        epsilon2 = epsilon if epsilon2 is None else epsilon2
     return (
         meta.get("pde_type"),
         float(meta.get("h", 0.0)),
-        None if meta.get("epsilon") is None else float(meta["epsilon"]),
+        epsilon,
+        epsilon1,
+        epsilon2,
         descriptors.get("diffusion_pattern"),
         meta.get("mesh_id"),
         int(meta.get("seed", 0)),

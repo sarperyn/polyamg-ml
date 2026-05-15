@@ -23,6 +23,8 @@ void write_sample_record_json(const std::string& path, const SampleMeta& meta, c
   j << "    \"theta\": " << meta.theta << ",\n";
   j << "    \"seed\": " << meta.seed << ",\n";
   j << "    \"epsilon\": " << json_num_or_null(meta.epsilon) << ",\n";
+  j << "    \"epsilon1\": " << json_num_or_null(meta.epsilon1) << ",\n";
+  j << "    \"epsilon2\": " << json_num_or_null(meta.epsilon2) << ",\n";
   j << "    \"viscosity\": " << json_num_or_null(meta.viscosity) << ",\n";
   j << "    \"inflow_u\": " << json_num_or_null(meta.inflow_u) << ",\n";
   j << "    \"sequence_step\": " << json_int_or_null(meta.sequence_step) << ",\n";

@@ -23,6 +23,8 @@ struct SampleMeta {
   double theta = 0.25;
   std::uint64_t seed = 0;
   std::optional<double> epsilon;
+  std::optional<double> epsilon1;
+  std::optional<double> epsilon2;
   std::optional<double> viscosity;
   std::optional<double> inflow_u;
   std::optional<int> sequence_step;

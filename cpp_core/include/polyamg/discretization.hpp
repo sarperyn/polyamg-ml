@@ -13,7 +13,8 @@ class DiscretizationAdapter {
   virtual ~DiscretizationAdapter() = default;
   virtual void assemble_elliptic_system(DM dm,
                                         double h,
-                                        double epsilon,
+                                        double epsilon1,
+                                        double epsilon2,
                                         DiffusionPattern pattern,
                                         Mat* A,
                                         Vec* b,
@@ -24,7 +25,8 @@ class DMPlexEllipticDiscretization final : public DiscretizationAdapter {
  public:
   void assemble_elliptic_system(DM dm,
                                 double h,
-                                double epsilon,
+                                double epsilon1,
+                                double epsilon2,
                                 DiffusionPattern pattern,
                                 Mat* A,
                                 Vec* b,

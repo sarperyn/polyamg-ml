@@ -25,8 +25,9 @@ int tile_index(double x, int n) {
   return idx;
 }
 
-double mu_value(double x, double y, double epsilon, DiffusionPattern pattern) {
-  const double kappa_hi = std::pow(10.0, epsilon);
+double mu_value(double x, double y, double epsilon1, double epsilon2, DiffusionPattern pattern) {
+  const double kappa_white = std::pow(10.0, epsilon1);
+  const double kappa_gray = std::pow(10.0, epsilon2);
   bool gray = false;
   switch (pattern) {
     case DiffusionPattern::VerticalSplit:
@@ -47,7 +48,7 @@ double mu_value(double x, double y, double epsilon, DiffusionPattern pattern) {
       break;
     }
   }
-  return gray ? kappa_hi : 1.0;
+  return gray ? kappa_gray : kappa_white;
 }
 
 double exact_u(double x, double y, int k) {
@@ -65,7 +66,8 @@ double forcing_f(double x, double y, double mu, int k) {
 
 void DMPlexEllipticDiscretization::assemble_elliptic_system(DM dm,
                                                             double h,
-                                                            double epsilon,
+                                                            double epsilon1,
+                                                            double epsilon2,
                                                             DiffusionPattern pattern,
                                                             Mat* A,
                                                             Vec* b,
@@ -132,7 +134,7 @@ void DMPlexEllipticDiscretization::assemble_elliptic_system(DM dm,
           const double x = x0c + (xi + 1.0) * hx * 0.5;
           const double y = y0c + (eta + 1.0) * hy * 0.5;
 
-          const double mu = mu_value(x, y, epsilon, pattern);
+          const double mu = mu_value(x, y, epsilon1, epsilon2, pattern);
           const double f = forcing_f(x, y, mu, k);
 
           const double detJ = hx * hy * 0.25;

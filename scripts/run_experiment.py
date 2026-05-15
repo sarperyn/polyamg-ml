@@ -44,6 +44,8 @@ def write_legacy_kv(config_path: Path, kv_path: Path) -> None:
         f"diffusion.pattern={cfg.diffusion_pattern}",
         f"theta_values={_csv(cfg.theta_values)}",
         f"epsilon_values={_csv(cfg.epsilon_values)}",
+        f"epsilon1_values={_csv(cfg.epsilon1_values)}",
+        f"epsilon2_values={_csv(cfg.epsilon2_values)}",
         f"h_values={_csv(cfg.h_values)}",
         f"solver.max_it={cfg.solver.max_it}",
         f"solver.rtol={cfg.solver.rtol}",

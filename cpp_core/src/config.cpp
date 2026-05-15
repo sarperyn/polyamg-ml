@@ -72,9 +72,13 @@ ExperimentConfig load_experiment_config(const std::string& path) {
 
   if (kv.count("theta_values")) cfg.theta_values = parse_vec(kv["theta_values"]);
   if (kv.count("epsilon_values")) cfg.epsilon_values = parse_vec(kv["epsilon_values"]);
+  if (kv.count("epsilon1_values")) cfg.epsilon1_values = parse_vec(kv["epsilon1_values"]);
+  if (kv.count("epsilon2_values")) cfg.epsilon2_values = parse_vec(kv["epsilon2_values"]);
   if (kv.count("h_values")) cfg.h_values = parse_vec(kv["h_values"]);
   if (cfg.theta_values.empty()) cfg.theta_values = {0.25};
-  if (cfg.epsilon_values.empty()) cfg.epsilon_values = {0.0};
+  if (cfg.epsilon_values.empty() && (cfg.epsilon1_values.empty() || cfg.epsilon2_values.empty())) {
+    cfg.epsilon_values = {0.0};
+  }
   if (cfg.h_values.empty()) cfg.h_values = {0.125};
 
   if (kv.count("solver.max_it")) cfg.solver.max_it = std::stoi(kv["solver.max_it"]);

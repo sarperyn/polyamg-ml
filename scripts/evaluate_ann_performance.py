@@ -52,6 +52,8 @@ class CaseEvaluation:
     join_key: tuple[Any, ...]
     h: float
     epsilon: float
+    epsilon1: float | None
+    epsilon2: float | None
     theta_ann: float
     theta_min: float
     theta_ref: float
@@ -179,6 +181,12 @@ def _evaluate_cases(
                 join_key=join_key,
                 h=float(representative.sample_meta["h"]),
                 epsilon=float(representative.sample_meta["epsilon"]),
+                epsilon1=None
+                if representative.sample_meta.get("epsilon1") is None
+                else float(representative.sample_meta["epsilon1"]),
+                epsilon2=None
+                if representative.sample_meta.get("epsilon2") is None
+                else float(representative.sample_meta["epsilon2"]),
                 theta_ann=theta_ann,
                 theta_min=theta_min,
                 theta_ref=theta_ref,
@@ -225,6 +233,8 @@ def _write_rows(path: Path, rows: list[CaseEvaluation]) -> None:
             [
                 "h",
                 "epsilon",
+                "epsilon1",
+                "epsilon2",
                 "theta_ann",
                 "theta_min",
                 "theta_ref",
@@ -241,6 +251,8 @@ def _write_rows(path: Path, rows: list[CaseEvaluation]) -> None:
                 [
                     row.h,
                     row.epsilon,
+                    "" if row.epsilon1 is None else row.epsilon1,
+                    "" if row.epsilon2 is None else row.epsilon2,
                     row.theta_ann,
                     row.theta_min,
                     row.theta_ref,

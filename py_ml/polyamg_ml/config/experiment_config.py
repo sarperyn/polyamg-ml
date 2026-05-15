@@ -44,6 +44,8 @@ class ExperimentConfig:
     seed: int = 1
     theta_values: tuple[float, ...] = (0.25,)
     epsilon_values: tuple[float, ...] = (0.0,)
+    epsilon1_values: tuple[float, ...] = ()
+    epsilon2_values: tuple[float, ...] = ()
     h_values: tuple[float, ...] = (0.125,)
     diffusion_pattern: str = "checker2x2"
     solver: SolverConfig = field(default_factory=SolverConfig)
@@ -98,6 +100,8 @@ def load_experiment_config(path: str | Path) -> ExperimentConfig:
         seed=int(data.get("seed", 1)),
         theta_values=_tuple_float(data.get("theta_values"), (0.25,)),
         epsilon_values=_tuple_float(data.get("epsilon_values"), (0.0,)),
+        epsilon1_values=_tuple_float(data.get("epsilon1_values"), ()),
+        epsilon2_values=_tuple_float(data.get("epsilon2_values"), ()),
         h_values=_tuple_float(data.get("h_values"), (0.125,)),
         diffusion_pattern=str(data.get("diffusion_pattern", "checker2x2")),
         solver=SolverConfig(**solver_data),

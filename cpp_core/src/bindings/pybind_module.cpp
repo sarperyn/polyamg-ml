@@ -27,6 +27,8 @@ polyamg::ExperimentConfig config_from_dict(const py::dict& d) {
   cfg.seed = get_or<std::uint64_t>(d, "seed", 1);
   cfg.theta_values = get_float_vector_or(d, "theta_values", {0.25});
   cfg.epsilon_values = get_float_vector_or(d, "epsilon_values", {0.0});
+  cfg.epsilon1_values = get_float_vector_or(d, "epsilon1_values", {});
+  cfg.epsilon2_values = get_float_vector_or(d, "epsilon2_values", {});
   cfg.h_values = get_float_vector_or(d, "h_values", {0.125});
   if (d.contains("features")) {
     py::dict features = py::cast<py::dict>(d["features"]);
@@ -64,6 +66,8 @@ py::dict meta_to_dict(const polyamg::SampleMeta& meta) {
   out["theta"] = meta.theta;
   out["seed"] = meta.seed;
   out["epsilon"] = meta.epsilon.has_value() ? py::cast(*meta.epsilon) : py::none();
+  out["epsilon1"] = meta.epsilon1.has_value() ? py::cast(*meta.epsilon1) : py::none();
+  out["epsilon2"] = meta.epsilon2.has_value() ? py::cast(*meta.epsilon2) : py::none();
   out["polygonal_descriptors"] = meta.polygonal_descriptors;
   return out;
 }
